@@ -1,0 +1,23 @@
+/* styles.css */
+
+.title {
+    text-align: center;
+  }
+  
+  .author-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .author-item {
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .author-item:hover {
+    background-color: #e0e0e0;
+  }
+  
