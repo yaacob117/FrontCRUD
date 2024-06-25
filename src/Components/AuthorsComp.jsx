@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { GetAllAuthors, DeleteAuthors } from '../API/EndPoints';
+import { GetAllAuthors, DeleteAuthor } from '../API/EndPoints';
 import '../CSS/AuthorsComp.css'; // Importa tus estilos CSS
 import DatagridComponent from '../Utils/DatagridComponent';
 
@@ -31,7 +31,7 @@ const AuthorsComponent = () => {
        data ={data}
        pageSize = {5}
       rowsPerPageoptions ={29}
-      urldelete ={DeleteAuthors}
+      urldelete ={DeleteAuthor}
        />
       </div>
     </>
