@@ -17,7 +17,6 @@ export const GetAllAuthors = async () => {
 export const DeleteAuthor = async (authorID) => {
     try {
        
-
         const response = await axios.delete(`${local}/api/Authors/DeleteAuthor`, {
             data: { authorID: authorID }
         });
@@ -28,9 +27,25 @@ export const DeleteAuthor = async (authorID) => {
     }
 }
 
-export const UpdateAuthor = async () => {
+export const AddAuthor = async (authorData) => {
     try {
-        const reponse = await axios.patch(`${local}/api/Authors/UpdateAuthor`)
+       
+        const response = await axios.post(`${local}/api/Authors/AddAuthor`, authorData)
+        return response;
+    } catch (error) {
+        throw error;
+    }
+}
+export const UpdateAuthor = async (authorData) => {
+    try {
+        console.log(authorData);
+        const response = await axios.put(`${local}/api/Authors/UpdateAuthor`, authorData,{
+           headers: {
+                'Content-Type': 'application/json'
+           } 
+        })
+        return response;
+
     } catch (error) {
         throw error
     }

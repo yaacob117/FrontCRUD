@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { GetAllAuthors, DeleteAuthor } from '../API/EndPoints';
 import '../CSS/AuthorsComp.css'; // Importa tus estilos CSS
-import DatagridComponent from '../Utils/DatagridComponent';
-
+import DatagridComponent  from '../Utils/DatagridComponent'
 const AuthorsComponent = () => {
   const [data, setData] = useState([]);
 
@@ -24,8 +23,10 @@ const AuthorsComponent = () => {
     return <p>Loading...</p>; // Muestra un mensaje de carga mientras se obtienen los datos
   }
 
+  
   return (
     <>
+    <h1 className='Header'>CRUD LIBRARY<span>Ejemplo</span></h1>
       <div>
        <DatagridComponent
        data ={data}

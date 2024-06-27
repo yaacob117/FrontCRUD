@@ -1,11 +1,14 @@
 import React, { useMemo, useState } from 'react';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import Button from '@mui/material/Button';
-import { ThemeProvider } from '@mui/material/styles';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import generateId from './IDGenerator';
-import {DeleteAuthor, UpdateAuthor} from "../API/EndPoints"
-const DatagridComponent = ({ data, pageSize, rowsPerPageoptions}) => {
+import { DeleteAuthor, UpdateAuthor } from "../API/EndPoints";
+import ModalEdit from '../Modals/ModalEdit'; // Importar el componente del modal
+import ModalAdd from '../Modals/ModalAdd';
+import { AddAuthor } from '../API/EndPoints';
+import '../CSS/ModalAdd.css'
+import DeleteModal from '../Modals/DeleteModal';
+
+const DatagridComponent = ({ data, pageSize, rowsPerPageoptions }) => {
   const rowsWithId = useMemo(() => {
     return data.map(row => ({
       ...row,
@@ -13,30 +16,40 @@ const DatagridComponent = ({ data, pageSize, rowsPerPageoptions}) => {
     }));
   }, [data]);
 
-const handleDelete =  (authorID)  => async () => {
-  const response = await DeleteAuthor(authorID);
-  if (response.status !== 200) {
-    console.log("OCURRIO UN ERRRO");
+  // Estado para controlar la visibilidad del modal y la fila seleccionada para editar
+  const [EditModalOpen, setEditModalOpen] = useState(false);
+  const [AddModalOpen, setAddModalOpen] = useState(false);
+  const[DeleteModalOpen, setDeleteModalOpen] = useState(false)
+
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [authorID, setSauthorID] = useState(null);
+
+
+  const handleDelete = async (row) => {
+    console.log(row);
+     setSauthorID(row)
+      setDeleteModalOpen(true)
+    }
+
+
+
+  const handleEdit = (row) => () => {
+    // Establecer la fila seleccionada y abrir el modal
+    setSelectedRow(row);
+    setEditModalOpen(true);
+  };
+
+  const handleAdd = () => {
+    setAddModalOpen(true);
   }
-  console.log("TODO BIEN");
 
-};
 
-const handleEdit = (row) => () => {
-  const {birthDate, firstName, lastName} = row;
-  const objet = {
-    birthDate,
-    firstName,
-    lastName
-  }
- console.log(objet);
-
-};
-
-// Columns
+  // Columns
   const dataColumns = useMemo(() => {
     if (rowsWithId.length > 0) {
       const keys = Object.keys(rowsWithId[0]);
+            let cols = keys
+
       return keys
         .filter((key) => key !== 'id')
         .map((key) => ({
@@ -55,39 +68,58 @@ const handleEdit = (row) => () => {
     return [];
   }, [rowsWithId]);
 
-  const actionColumn = {
+  const EdtiColumn = {
     field: 'actions',
-    headerName: 'ACCIONES',
+    headerName: '',
     headerAlign: 'center',
     align: 'center',
     flex: 1,
     sortable: false,
+    
     renderCell: (params) => (
       <div style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
-        <Button
-          variant="contained"
-          color="primary"
-          size="small"
-          onClick={handleEdit(params.row)}
-        >
+        <button className = 'buttonEdit'
+           onClick={handleEdit(params.row)} // Manejar el evento de editar
+          >
           Editar
-        </Button>
-        <Button
-          variant="contained"
-          color="secondary"
-          size="small"
-          onClick={handleDelete(params.row.authorID)}
-        >
-          Eliminar
-        </Button>
+        </button>
+        
       </div>
     ),
   };
 
-  const columns = useMemo(() => [...dataColumns, actionColumn], [dataColumns]);
+
+  const DeleteColumn = {
+    field: 'actasdasions',
+    headerName: '',
+    headerAlign: 'center',
+    align: 'center',
+    flex: 1,
+    sortable: false,
+    
+    renderCell: (params) => (
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
+        <button className='buttonDelete'
+          onClick={() => {
+            handleDelete(params.row)
+          }}
+
+        >
+          Eliminar
+        </button>
+      </div>
+    ),
+  };
+
+  
+
+  const columns = useMemo(() => [...dataColumns, EdtiColumn, DeleteColumn], [dataColumns]);
 
   return (
     <div className="sticky-container mb-12">
+       <button  className = 'buttonAdd' onClick={handleAdd} >
+        Agregar Autor
+      </button>
       <DataGrid
         className="custom-data-grid mx-4"
         rows={rowsWithId}
@@ -102,6 +134,25 @@ const handleEdit = (row) => () => {
           }
         }}
       />
+            <ModalAdd 
+            show={AddModalOpen} 
+            onClose={() => setAddModalOpen(false)}
+            AddAuthor={AddAuthor}
+             />
+              <DeleteModal
+              show={DeleteModalOpen} 
+              authorID ={authorID}
+              onClose={() => setDeleteModalOpen(false)}
+              />
+      {/* Incluir el modal para editar */}
+      {selectedRow && (
+        <ModalEdit
+          show={EditModalOpen}
+          onClose={() => setEditModalOpen(false)}
+          selectedRow={selectedRow}
+          UrlEdit={UpdateAuthor}
+        />
+      )}
     </div>
   );
 };

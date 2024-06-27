@@ -2,6 +2,7 @@
 
 .title {
     text-align: center;
+    color: aqua;
   }
   
   .author-list {
@@ -20,4 +21,5 @@
   .author-item:hover {
     background-color: #e0e0e0;
   }
+
   
