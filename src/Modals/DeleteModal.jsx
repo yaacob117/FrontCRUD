@@ -4,6 +4,9 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
+import { DeleteAuthor } from "../API/EndPoints";
+import toast, { Toaster } from 'react-hot-toast';
+ 
  
 const style = {
     position: 'absolute',
@@ -26,30 +29,33 @@ function DeleteModal({show, onClose, authorID}) {
     const handleDelete = async () => {
     setIsDeleting(true)
     try {
-        const response = await DeleteAuthor({courseName: authorID})
+        const response = await DeleteAuthor(authorID)
         console.log(response);
 
         if (response === 200) {
             console.log("Deleted successfully");
+            toast.success('Autor eliminado correctamnte!')
         }
         else {
             console.log("Couldn't delete the desired registry");
+            toast.error("No se pudo eliminar el autor, intentalo de nuevo.")
         }
     } catch (error) {
         console.log("Couldn't connect to the DataBase");
     }
       finally{
-        setTimeout(() => {
-            onClose(true)
-        }, 
+         setTimeout(() => {
+             onClose(true)
+         }, 
         
-        2000)
+         2000)
 
-        setIsDeleting(false)
+         setIsDeleting(false)
       }
     }
 return(
     <>
+        <div><Toaster/></div>
         <Modal
         open = {show}
         onClose = {onClose}

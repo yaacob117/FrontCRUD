@@ -21,7 +21,7 @@ export const DeleteAuthor = async (authorID) => {
             data: { authorID: authorID }
         });
 
-        return response;
+        return response.status;
     } catch (error) {
         throw error;
     }

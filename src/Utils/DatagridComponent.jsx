@@ -27,7 +27,7 @@ const DatagridComponent = ({ data, pageSize, rowsPerPageoptions }) => {
 
   const handleDelete = async (row) => {
     console.log(row);
-     setSauthorID(row)
+     setSauthorID(row.authorID)
       setDeleteModalOpen(true)
     }
 

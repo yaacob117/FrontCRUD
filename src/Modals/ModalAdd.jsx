@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
+import toast, { Toaster } from 'react-hot-toast';
 
 // Estilos del modal
 const style = {
@@ -43,11 +42,13 @@ const ModalAdd = ({ show, onClose, AddAuthor }) => {
 
       if (response.status === 200) {
         console.log(response.data); // Confirmar que la adición fue exitosa
+        toast.success('Autor agregado exitosamete!')
       } else {
         console.log("Couldn't add the author, try again"); // Indicar que la adición falló
       }
     } catch (error) {
       console.error("Couldn't connect to the database,", error); // Manejar errores de conexión
+      toast.error('No fue posible agregar el autor, intentalo de nuevo.')
     } finally {
       setIsAdding(false); // Indicar que la adición ha terminado
       onClose(); // Cerrar el modal después de guardar
@@ -55,6 +56,8 @@ const ModalAdd = ({ show, onClose, AddAuthor }) => {
   };
 
   return (
+    <>
+    <div><Toaster/></div>
     <Modal
       open={show} // Controlar la visibilidad del modal
       onClose={onClose} // Función para cerrar el modal
@@ -82,7 +85,7 @@ const ModalAdd = ({ show, onClose, AddAuthor }) => {
               type="text"
               name="firstName" // Nombre del campo que se está actualizando
               value={authorData.firstName} // Valor actual del estado
-              // onChange={handleAdd} // Manejador de cambios
+              onChange={handleAdd} // Manejador de cambios
             />
           </label>
           <label className="mr-8 flex justify-center mb-8">
@@ -106,6 +109,7 @@ const ModalAdd = ({ show, onClose, AddAuthor }) => {
         </Box>
       </Box>
     </Modal>
+    </>
   );
 };
 

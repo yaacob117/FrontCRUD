@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import '../CSS/ModalEdit.css'
+import toast, { Toaster } from 'react-hot-toast';
+
 
 const style = {
   position: 'absolute',
@@ -15,10 +16,14 @@ const style = {
   border: '2px solid #000',
   boxShadow: 24,
   p: 6,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
 };
 
 const ModalEdit = ({ show, onClose, selectedRow, UrlEdit }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
   const [authorData, setAuthorData] = useState({
     authorID: selectedRow.AuthorID,
     birthDate: '',
@@ -35,6 +40,7 @@ console.log(selectedRow);
         firstName: selectedRow.firstName,
         lastName: selectedRow.lastName
       });
+      setHasChanges(false);
     }
   }, [selectedRow]);
 
@@ -45,6 +51,7 @@ console.log(selectedRow);
       ...prev,
       [name]: value
     }));
+    setHasChanges(true);
   };
 
   const handleSave = async () => {
@@ -53,11 +60,14 @@ console.log(selectedRow);
       const response = await UrlEdit(authorData);
       if (response.status === 200) {
              console.log(response.data);
+             toast.success('Autor editado correctamente!')
       } else {
         console.log("Couldn't apply the changes");
+        toast.error('Hubo un error al actualizar el autor, intentalo de nuevo.')
       }
     } catch (error) {
       console.error("Couldn't connect to the database", error);
+      toast.error('Hubo un error al actualizar el autor, intentalo de nuevo.')
     } finally {
       setIsEditing(false);
       onClose(); // Cerrar el modal después de guardar
@@ -65,6 +75,8 @@ console.log(selectedRow);
   };
 
   return (
+    <>
+    <div><Toaster/></div>
     <Modal 
       open={show}
       onClose={onClose}
@@ -72,11 +84,11 @@ console.log(selectedRow);
       aria-describedby="modal-modal-description"
     >
       <Box sx={style}>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
+        <div className='title-edit'>
           Editar Autor
-        </Typography>
+        </div>
         <Box component="form" noValidate autoComplete="off">
-          <label>
+          <label className='birthdate'>
             Fecha de Nacimiento:
             <input
               type="date"
@@ -104,16 +116,18 @@ console.log(selectedRow);
             />
           </label>
 
-          <Button onClick={handleSave} disabled={isEditing}>
-            {isEditing ? 'Guardando...' : 'Guardar'}
-          </Button>
-
-          <Button onClick={onClose} disabled={isEditing}>
-            Cancelar
-          </Button>
+          <div className="button-container">
+    <button className='save' onClick={handleSave} disabled={isEditing || !hasChanges}>
+      {isEditing ? 'Guardando...' : 'Guardar'}
+    </button>
+    <button className='cancel' onClick={onClose} disabled={isEditing}>
+      Cancelar
+    </button>
+  </div>  
         </Box>
       </Box>
     </Modal>
+    </>
   );
 };
 
