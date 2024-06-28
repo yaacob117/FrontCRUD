@@ -18,40 +18,38 @@ const style = {
 
 const ModalAdd = ({ show, onClose, AddAuthor }) => {
   const [isAdding, setIsAdding] = useState(false); // Estado para manejar si estamos en proceso de agregar
+  const [hasChanges, setHasChanges] = useState(false);
   const [authorData, setAuthorData] = useState({
     birthDate: "",
     firstName: "", // Se cambia a 'firstName' para que coincida con el nombre en el input
     lastName: "", // Se cambia a 'lastName' para que coincida con el nombre en el input
   });
 
-  // Manejar los cambios en los inputs
   const handleAdd = (e) => {
     const { name, value } = e.target;
     setAuthorData((prev) => ({
-      ...prev, // Copiar las propiedades actuales del estado
-      [name]: value, // Actualizar solo la propiedad específica con el nuevo valor
+      ...prev,
+      [name]: value,
     }));
+    setHasChanges(true); // Indicar que se han realizado cambios
   };
 
-  // Manejar la acción de guardar
   const handleSave = async () => {
-    setIsAdding(true); // Indicar que estamos en proceso de agregar
+    setIsAdding(true);
     try {
-      console.log("Estos son los datos", authorData); // Mostrar los datos del autor antes de enviarlos
-      const response = await AddAuthor(authorData); // Enviar los datos al backend para agregar
-
+      const response = await AddAuthor(authorData);
       if (response.status === 200) {
-        console.log(response.data); // Confirmar que la adición fue exitosa
-        toast.success('Autor agregado exitosamete!')
+        toast.success('Autor agregado exitosamente!')
       } else {
-        console.log("Couldn't add the author, try again"); // Indicar que la adición falló
+        toast.error("No se pudo agregar el autor, intente de nuevo");
       }
     } catch (error) {
-      console.error("Couldn't connect to the database,", error); // Manejar errores de conexión
-      toast.error('No fue posible agregar el autor, intentalo de nuevo.')
+      console.error("No se pudo conectar a la base de datos", error);
+      toast.error('No fue posible agregar el autor, inténtelo de nuevo.')
     } finally {
-      setIsAdding(false); // Indicar que la adición ha terminado
-      onClose(); // Cerrar el modal después de guardar
+      setIsAdding(false);
+      setHasChanges(false); // Resetear los cambios
+      onClose();
     }
   };
 
@@ -99,7 +97,7 @@ const ModalAdd = ({ show, onClose, AddAuthor }) => {
             />
           </label>
           <div className=" space-x-12 flex justify-center">
-          <button className="button px-5 py-2.5 bg-blue-400 rounded-lg hover:bg-blue-500 text-white" onClick={handleSave} disabled={isAdding}>
+          <button className="button px-5 py-2.5 bg-blue-400 rounded-lg hover:bg-blue-500 text-white" onClick={handleSave} disabled={isAdding || hasChanges}>
             {isAdding ? "Guardando..." : "Guardar"}
           </button>
           <button className="button px-5 py-2.5 bg-red-400 rounded-lg hover:bg-red-500 text-white" onClick={onClose} disabled={isAdding}>

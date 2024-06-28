@@ -11,6 +11,10 @@ export default function Authors() {
 
 
         <AuthorsComponent/>
+        <AuthorsComponent/>
+        <AuthorsComponent/>
+        <AuthorsComponent/>
+        <AuthorsComponent/>
 
         {/* <Footer/> */}
 
